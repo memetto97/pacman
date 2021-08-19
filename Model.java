@@ -11,7 +11,6 @@ import java.util.Scanner;
 import java.io.File;
 import java.io.PrintWriter;
 
-
 public class Model extends JPanel implements ActionListener{
     
     private Dimension d; //altezza e larghezza del jpanel
@@ -26,20 +25,22 @@ public class Model extends JPanel implements ActionListener{
     private final int MAX_GHOSTS = 12;
     private final int PACMAN_SPEED = 6;
 
-    private int N_GHOSTS = 6;
+    private int N_GHOSTS = 4;
     private int lives, score, highscore;
     private int[] dx, dy;
     private int[] ghost_x, ghost_y, ghost_dx, ghost_dy, ghostSpeed;//ghostx e y sono array con le coordinate iniziali dei fantasmi, ghostdx e dy indicano la direzione in cui si muovono 
 
-    private Image heart, ghost;
+    private Image heart, ghost, ghost1, ghost2, ghost3;
     private Image up, down, left, right, life, boh, boh2, boh3, boh4, boh5, boh6, boh7, boh8, boh9, boh10, boh11, boh12, boh13, boh14, boh15, boh16, boh17, boh18, boh19, boh20, boh21, boh22, boh23, boh24, titleScreenImage;
+    private Image gameOver;
+
 
     private int pacman_x, pacman_y, pacmand_x, pacmand_y;//pacmanx e y indicano le coordinate di pacman, pacmandx e dy indicano il delta in cui si stanno per muovere
     private int req_dx, req_dy;//indicano la richiesta di movimento data dall'input di chi sta muovendo pacman
 
     private final short levelData[] = { 
          0,  0, 19, 18, 18, 18, 18, 18, 22,  0,  0,  0,  0, 19, 18, 22,  0,  0,  0, 19, 22,  0,  0,  0,
-         0,  0, 17, 16, 16, 24, 16, 16, 16, 18, 22,  0, 19, 16, 16, 20,  0,  0,  0, 19, 16, 18, 18, 22,
+         0,  0, 17, 16, 16, 24, 16, 16, 16, 18, 22,  0, 19, 16, 16, 20,  0,  0,  0, 17, 16, 18, 18, 22,
         27, 26, 24, 24, 28,  0, 17, 16, 16, 16, 16, 18, 16, 16, 16, 16, 18, 18, 18, 16, 16, 16, 16, 20,
          0,  0,  0,  0,  0,  0, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 28,
         19, 18, 18, 18, 18, 18, 16, 16, 16, 16, 24, 24, 24, 24, 16, 16, 16, 16, 16, 16, 16, 16, 20,  0,
@@ -90,6 +91,9 @@ public class Model extends JPanel implements ActionListener{
     	left = new ImageIcon("C:/Users/Matteo/Desktop/PIGDM-pacman/images/left.gif").getImage();
     	right = new ImageIcon("C:/Users/Matteo/Desktop/PIGDM-pacman/images/right.gif").getImage();
         ghost = new ImageIcon("C:/Users/Matteo/Desktop/PIGDM-pacman/images/ghost.gif").getImage();
+        ghost1 = new ImageIcon("C:/Users/Matteo/Desktop/PIGDM-pacman/images/ghost1.gif").getImage();
+        ghost2 = new ImageIcon("C:/Users/Matteo/Desktop/PIGDM-pacman/images/ghost2.gif").getImage();
+        ghost3 = new ImageIcon("C:/Users/Matteo/Desktop/PIGDM-pacman/images/ghost3.gif").getImage();
         heart = new ImageIcon("C:/Users/Matteo/Desktop/PIGDM-pacman/images/heart.png").getImage();
         life = new ImageIcon("C:/Users/Matteo/Desktop/PIGDM-pacman/images/life.png").getImage();
         boh = new ImageIcon("C:/Users/Matteo/Desktop/PIGDM-pacman/images/boh.png").getImage();
@@ -118,6 +122,8 @@ public class Model extends JPanel implements ActionListener{
         boh24 = new ImageIcon("C:/Users/Matteo/Desktop/PIGDM-pacman/images/boh24.png").getImage();
 
         titleScreenImage = new ImageIcon("C:/Users/Matteo/Desktop/PIGDM-pacman/images/pacman-screen.png").getImage();
+
+        gameOver = new ImageIcon("C:/Users/Matteo/Desktop/PIGDM-pacman/images/game-over.png").getImage();
 
 
     }
@@ -219,6 +225,7 @@ public class Model extends JPanel implements ActionListener{
 
         if (lives == 0) {
             inGame = false;
+            //gameOver(g2d);
             if(score>highscore){
                 PrintWriter out;
                 try{
@@ -234,6 +241,18 @@ public class Model extends JPanel implements ActionListener{
 
         continueLevel();
     }
+
+
+//show a game-over scren
+    /*private void gameOver(Graphics2D g2d){
+        g2d.setColor(Color.BLACK);
+        g2d.fillRect(0,0,600,600);
+        g2d.drawImage(gameOver,70,30,Color.BLACK,null);
+          
+
+    }*/
+
+
 
     private void moveGhosts(Graphics2D g2d) {
 
@@ -296,7 +315,7 @@ public class Model extends JPanel implements ActionListener{
 
             ghost_x[i] = ghost_x[i] + (ghost_dx[i] * ghostSpeed[i]);
             ghost_y[i] = ghost_y[i] + (ghost_dy[i] * ghostSpeed[i]);
-            drawGhost(g2d, ghost_x[i] + 1, ghost_y[i] + 1);
+            drawGhost(g2d, ghost_x[i] + 1, ghost_y[i] + 1,i);////////////////
 
             if (pacman_x > (ghost_x[i] - 12) && pacman_x < (ghost_x[i] + 12)
                     && pacman_y > (ghost_y[i] - 12) && pacman_y < (ghost_y[i] + 12)
@@ -309,8 +328,15 @@ public class Model extends JPanel implements ActionListener{
 
 
 
-    private void drawGhost(Graphics2D g2d, int x, int y) {
-    	g2d.drawImage(ghost, x, y, this);
+    private void drawGhost(Graphics2D g2d, int x, int y, int z) {/////////////
+        if((z%4)==0)
+            g2d.drawImage(ghost, x, y, this);
+        if((z%4)==1)
+            g2d.drawImage(ghost1, x, y, this);
+        if((z%4)==2)
+            g2d.drawImage(ghost2, x, y, this);
+        if((z%4)==3)
+            g2d.drawImage(ghost3, x, y, this);
         }
 
         
@@ -620,7 +646,7 @@ public class Model extends JPanel implements ActionListener{
             }
         catch(Exception e){}
         initLevel();
-        N_GHOSTS = 6;
+       // N_GHOSTS = 6;
         currentSpeed = 3;
     }
 
